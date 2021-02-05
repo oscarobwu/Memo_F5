@@ -1,0 +1,231 @@
+#irule_Domain_ReWrite_v5_166_test_v1
+#===============================================================================
+#
+#         Filename:       irule_Domain_ReWrite_test_v1.tcl
+#
+#        USAGE: irule_Domain_ReWrite_test_v1.tcl
+#
+#  DESCRIPTION: 使用網頁切換 加快 LB 反映 load 的速度
+#
+#      OPTIONS: ---
+# REQUIREMENTS: ---
+#         BUGS: ---
+#        NOTES: ---
+#       AUTHOR: Oscarob Wu(oscarobwu@gmail.com), 
+# ORGANIZATION: 
+#      VERSION: 1.0
+#      Created Time: 2021-01-14 19:43:32
+#      Last modified: 2021-01-14 20:46
+#     REVISION: ---
+#===============================================================================
+when CLIENT_ACCEPTED {
+    if { [PROFILE::exists clientssl] } then {
+        set client_protocol "https"
+    } else {
+        set client_protocol "http"
+    }
+}
+when HTTP_REQUEST {
+    set client [IP::client_addr] 
+    set url [HTTP::host][HTTP::uri]
+    #set url [HTTP::header Host][HTTP::uri]
+#------------------------------------------------------------------------
+# variable for change
+#------------------------------------------------------------------------
+	set CDN_1_Active { autourl[1]="https://yy.ggg8199.net"; }
+	set CDN_1_Standby { autourl[1]="https://yy.ggg6275.net"; }
+#
+	set CDN_2_Active { autourl[2]="https://yy.ggg9966.com"; }
+#	set CDN_2_Active { autourl[2]="https://null"; }
+	set CDN_2_Standby { autourl[2]="https://yy.ggg5176.net";}
+#
+	set CDN_3_Active { autourl[3]="https://yy.ggg7555.net"; }
+	set CDN_3_Standby { autourl[3]="https://yy.ggg8898.net"; }
+#
+	set CDN_4_Active { autourl[4]="https://yy.ggg8655.net"; }
+	set CDN_4_Standby { autourl[4]="https://yy.ggg5577.net"; }
+#
+#	set CDN_5_Active { autourl[5]="https://yy.ggg5688.net"; }
+#	set CDN_5_Standby { autourl[5]="https://yy.ggg5688.net"; }
+	set CDN_5_Active { autourl[5]="https://null"; }
+	set CDN_5_Standby { autourl[5]="https://null"; }
+#
+	set CDN_6_Active { autourl[6]="https://yy.ggg8299.net"; }
+	set CDN_6_Standby { autourl[6]="https://yy.ggg5766.net"; }
+#
+#------------------------------------------------------------------------
+# variable for change == Do not edit ==
+#------------------------------------------------------------------------
+        set page_code { 
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta HTTP-EQUIV="cache-control" content="max-age=0">
+    <meta HTTP-EQUIV="Pragma" Content="no-cache">
+    <meta HTTP-EQUIV="Expires" Content="-1">
+    <meta HTTP-EQUIV="Pragma-directive: no-cache">
+    <meta HTTP-EQUIV="Cache-directive: no-cache">
+    <title>CheckSpeed...</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link href="https://az.gggcdn.net/Content/Css/loading.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="loading_outer">
+        <div class="loading_inner">
+            <img class="logo" src="https://az.gggcdn.net/Content/Images/img_logo.svg"><br>
+            <span>智能线路判断</span>
+            <img class="circle" src="https://az.gggcdn.net/Content/Images/circle.svg">
+        </div>
+    </div>
+<div style = "display:none">
+</div>
+		<div style = "display:none"> //显示测试开关b
+        <body>
+
+        测试网站连接速度：
+
+        <script language="javascript">
+        tim=1
+        setInterval("tim++",100)
+        b=1
+        var autourl=new Array()
+			}
+
+        set page_code2 { 
+        var content = "/Content/Images/200KB.jpg?v=";
+        var startTime= new Date().getTime();
+        var fastestIndex = 1;
+        var fastestSpeed;
+        var dg1 = Date.now();
+        var qhost = window.location.hostname;
+        var query = window.location.search;
+        var mylink = "/agentset?domain="
+        var agen = self.location.hostname.split(".",1);
+
+        function butt(){
+            document.write("<form name=autof>");
+            for(var i=1;i<autourl.length;i++)
+            {
+            document.write('<input type=text name=txt'+i+' size=10 value="测试中...">'
+                            +'=> <input type="text" name="url'+i+'" value="'+autourl[i]+'" size="40">'
+                            +'=> <input type="button" value="GO" onclick="window.open(\''+autourl[i]+'\')"\><br>');
+            }
+            document.write('<input type=submit value="刷新"></form>');
+        }
+        butt();
+        function run()
+        {
+            for(var i=1;i<autourl.length;i++)
+            {
+                document.write('<img src="' + autourl[i] + content + dg1 + '" width="30" height="30" style="display:none;" onload="auto('+i+',true)" onerror="auto('+i+',false)"\>');
+            }
+            b=i;
+        }
+        run();
+        function auto(index,result){
+            if(!result){
+                document.forms[0]["txt"+index].value="Error!";
+            }
+            else
+            {
+                document.forms[0]["txt"+index].value="Time"+ (new Date().getTime() - startTime)/1000+"sec";
+                if (fastestSpeed == undefined || (new Date().getTime() - startTime) <= fastestSpeed)
+                {
+                    fastestSpeed = new Date().getTime() - startTime
+                    fastestIndex = index;
+                    //导页开关
+                    //window.location = autourl[fastestIndex];
+                    top.location = autourl[fastestIndex] + mylink + qhost;
+                }
+            }
+            if(index == autourl.length-1)
+            {
+                //导页开关
+                //window.location = autourl[fastestIndex];
+            }
+            console.log('index:'+index+", "+fastestSpeed);
+        }
+        </script>
+        </body>
+        <HEAD>
+        <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+        <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+        <META HTTP-EQUIV="Expires" CONTENT="-1">
+        </HEAD>
+        </div>
+        </html>
+		}
+    #set default_pool [LB::server pool]
+    switch -glob [string tolower [HTTP::host]] {
+        "imgcdn.ggg166.net" -
+        "imgcdn.ggg11.net" { 
+            log local0. "Client: $client -> URL:$url is allow_host_rang"
+            return
+            }
+        "w*.ggg11.net" -
+        "images.ggg11.net" -
+        "mg.ggg11.net" -
+        "uatmg.ggg11.net" {
+            #pool $default_pool
+            HTTP::respond 302 Location https://yy11.net/
+            return
+			}
+        }
+    if { [class match [HTTP::host] equals Game_Redirect] } {
+        set redirect_value [class match -value [HTTP::host] equals Game_Redirect]
+        HTTP::respond 302 Location "https://$redirect_value"
+        return
+    }
+    if { [HTTP::uri] equals "/favicon.ico" }  {
+        # replace <favicon_iFile> in below line with the name of the Favicon iFile
+        HTTP::respond 200 content [ifile get favicon.ico] "Content-Type" "image/x-icon" 
+    }
+    if { [string match "*.uatt.ggg11.net" [string tolower [HTTP::host]]] or [string match "*.uatt.ggg166.net" [string tolower [HTTP::host]]] } {
+        #log local0. "Source IP address for connection to node: [IP::client_addr] [HTTP::uri]"
+            HTTP::respond 200 content "
+    	    $page_code 
+	    	$CDN_1_Active
+		    $CDN_2_Active
+	    	$CDN_3_Active
+    		$CDN_4_Active
+    		$CDN_5_Active
+    		$CDN_6_Active
+    	    $page_code2"
+        log local0. "Client: $client -> URL:$url is allow_host_rang"
+        return
+
+    }
+    switch -glob [string tolower [HTTP::host]] {
+        "*.ggg112.net" -
+        "*.ggg113.net" -
+        "*.ggg110.net" -
+        "*.ggg166.net" -
+        "*.ggg18.net" -
+        "*.ggg16.net" -
+        "*.ggg17.net" -
+        "*.ggg1109.net" -
+        "*.ggg1119.net" -
+        "*.ggg1110.net" -
+        "*.ggg116.net" -
+        "*.ggg119.net" -
+        "*.ggg115.net" -
+        "*.ggg193.net" -
+        "*.ggg172.net" -
+        "*.ggg176.net" {
+            #log local0. "Source IP address for connection to node: [IP::client_addr] [HTTP::uri]"
+            HTTP::respond 200 -version 1.1 content "
+    	    $page_code 
+	    	$CDN_1_Active
+		    $CDN_2_Active
+	    	$CDN_3_Active
+    		$CDN_4_Active
+    		$CDN_5_Active
+    		$CDN_6_Active
+    	    $page_code2" noserver "Content-Type" "text/html; charset=utf-8"
+            #return
+                log local0. "Client: $client -> $client_protocol URL: $url is allow_host_rang"
+        }
+    }
+}
